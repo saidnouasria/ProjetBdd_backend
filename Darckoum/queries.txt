@@ -1,0 +1,17 @@
+INSERT INTO homes_property (property_id, typename) VALUES
+(1, 'Villa'),
+(2, 'Apartment'),
+(3, 'Condo'),
+(4, 'Penthouse'),
+(5, 'Mobile_home'),
+(6, 'eco_friendly_home'),
+(7, 'vacation_home');
+
+
+INSERT INTO homes_transaction (trans_id, transname) VALUES
+(1, 'Sale'),
+(2, 'Rent');
+
+insert into homes_user (user_id,first_name,last_name,email,phone,gender) values (1,'said','nouasria','saidnouasria23@gmail.com',0556043325,'M');
+
+insert into homes_house values (1,"dar f centre ville",192320.00,'elannasser','bba','kbira fiha piscine w fiha 3 etages',7,2,1);
