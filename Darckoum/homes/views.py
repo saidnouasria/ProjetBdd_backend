@@ -91,11 +91,12 @@ def house_details_api(request,house_id):
          user_id=request.data.get('user_id')
          property_type_id=request.data.get('property_type_id')
          transaction_id=request.data.get('transaction_id')
-         sql = "UPDATE homes_house SET title=%s , price = %s ,address = %s,city= %s,description =%s, user_id =%s, property_type_id =%s, transaction_id =%s, WHERE house_id = 3 ;"
+         sql = "UPDATE homes_house SET title=%s , price = %s ,address = %s,city= %s,description =%s, user_id =%s, property_type_id =%s, transaction_id =%s, WHERE house_id = %s ;"
      
                  
          with connection.cursor() as cursor:
-            cursor.execute(sql,[title,price, address, city, description, user_id,property_type_id,transaction_id])
+            cursor.execute(sql,
+                           [title,price, address, city, description, user_id,property_type_id,transaction_id,house_id])
          return Response(house_serializer.data )
       else :
          return Response(house_serializer.errors,status=400 )
