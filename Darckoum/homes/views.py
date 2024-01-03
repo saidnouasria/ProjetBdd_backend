@@ -81,7 +81,7 @@ def house_details_api(request,house_id):
       house_data=request.data
       house_serializer=HouseSerializer(data=house_data)
       if house_serializer.is_valid(): 
-         sql = "UPDATE homes_house SET title=%s , price = %s ,address = %s,city= %s,description =%s, user_id =%s, property_type_id =%s, transaction_id =%s, WHERE house_id = %s ;"
+         
          
          title = request.data.get('title')
          price=request.data.get( 'price')
@@ -91,7 +91,7 @@ def house_details_api(request,house_id):
          user_id=request.data.get('user_id')
          property_type_id=request.data.get('property_type_id')
          transaction_id=request.data.get('transaction_id')
-         sql = "UPDATE homes_house SET title=%s , price = %s ,address = %s,city= %s,description =%s, user_id =%s, property_type_id =%s, transaction_id =%s, WHERE house_id = %s ;"
+         sql = "UPDATE homes_house SET title=%s , price = %s ,address = %s,city= %s,description =%s, user_id_id =%s, property_type_id_id =%s, transaction_id_id =%s WHERE house_id = %s ;"
      
                  
          with connection.cursor() as cursor:
