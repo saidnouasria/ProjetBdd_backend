@@ -13,27 +13,19 @@ from homes.models import House,User,Transaction,Property
 # Create your views here.
 
 @csrf_exempt
-@api_view(['GET','POST'])
+@api_view(['GET'])
 def house_api(request,id=0) :
 
 
     if request.method =='GET' :
        houses = House.objects.raw("select * from homes_house")
        house_serializer = HouseSerializer(houses,many=True) 
-
-       print(house_serializer.data)
-       print (connection.queries)
-
        return Response(house_serializer.data)
+         
+@api_view(['POST'])
+def add_house_api(request,id=0):
     
-     # if request.method == 'POST' :
-     #     house_data=JSONParser().parse(request)
-     #     house_serializer=HouseSerializer(data=house_data)
-     #     if serializer.is_valid(): 
-     #         House.objects.raw("INSERT INTO homes_house values ")
-     #         serializer.save()
-     #         return JsonResponse(serializer.data , status= status.HTTP_201_CREATED)
-    elif request.method == 'POST' :
+    if request.method == 'POST' :
         house_data=request.data
         house_serializer=HouseSerializer(data=house_data)
         if house_serializer.is_valid(): 
@@ -54,4 +46,39 @@ def house_api(request,id=0) :
 
             
         
+         return Response(house_serializer.data )
+        else :
+         return Response(house_serializer.errors,status=400 )
+
+@api_view(['GET'])
+def my_houses_api(request) :
+
+    id = 1
+    if request.method =='GET' :
+       my_houses_query=House.objects.raw("SELECT * FROM homes_house WHERE user_id_id = %s", [id])
+       my_houses=[house for house in my_houses_query]
+
+       house_serializer = HouseSerializer(my_houses,many=True) 
+       return Response(house_serializer.data)
+
+
+
+@api_view(['GET','PUT'])
+def house_details_api(request,house_id):
+   try:
+      i = House.objects.get(pk=house_id)
+   except House.DoesNotExist : 
+      return Response(status=404)
+
+   if request.method =='GET' :
+       house = House.objects.raw("select * from homes_house where house_id = {house_id} ")
+       house_serializer = HouseSerializer(house,many=True) 
+       return Response(house_serializer.data)
+   
+
+   if request.method == 'PUT' :
+      house_data=request.data
+      house_serializer=HouseSerializer(data=house_data)
+      if house_serializer.is_valid(): 
+         sql = "UPDATE homes_house SET  WHERE house_id = %s ;"
          return Response(house_serializer.data )
