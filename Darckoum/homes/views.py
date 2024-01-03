@@ -71,8 +71,9 @@ def house_details_api(request,house_id):
       return Response(status=404)
 
    if request.method =='GET' :
-       house = House.objects.raw("select * from homes_house where house_id = {house_id} ")
-       house_serializer = HouseSerializer(house,many=True) 
+       house_query = House.objects.raw("select * from homes_house where house_id = %s ",[house_id])
+       house_obj=[house for house in house_query]
+       house_serializer = HouseSerializer(house_obj,many=True) 
        return Response(house_serializer.data)
    
 
@@ -80,5 +81,21 @@ def house_details_api(request,house_id):
       house_data=request.data
       house_serializer=HouseSerializer(data=house_data)
       if house_serializer.is_valid(): 
-         sql = "UPDATE homes_house SET  WHERE house_id = %s ;"
+         sql = "UPDATE homes_house SET title=%s , price = %s ,address = %s,city= %s,description =%s, user_id =%s, property_type_id =%s, transaction_id =%s, WHERE house_id = %s ;"
+         
+         title = request.data.get('title')
+         price=request.data.get( 'price')
+         address=request.data.get( 'address')
+         city=request.data.get('city')
+         description=request.data.get('description')
+         user_id=request.data.get('user_id')
+         property_type_id=request.data.get('property_type_id')
+         transaction_id=request.data.get('transaction_id')
+         sql = "UPDATE homes_house SET title=%s , price = %s ,address = %s,city= %s,description =%s, user_id =%s, property_type_id =%s, transaction_id =%s, WHERE house_id = 3 ;"
+     
+                 
+         with connection.cursor() as cursor:
+            cursor.execute(sql,[title,price, address, city, description, user_id,property_type_id,transaction_id])
          return Response(house_serializer.data )
+      else :
+         return Response(house_serializer.errors,status=400 )
