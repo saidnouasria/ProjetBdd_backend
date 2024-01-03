@@ -63,7 +63,7 @@ def my_houses_api(request) :
 
 
 
-@api_view(['GET','PUT'])
+@api_view(['GET','PUT','DELETE'])
 def house_details_api(request,house_id):
    try:
       i = House.objects.get(pk=house_id)
@@ -100,3 +100,11 @@ def house_details_api(request,house_id):
          return Response(house_serializer.data )
       else :
          return Response(house_serializer.errors,status=400 )
+      
+
+   if request.method == 'DELETE' :
+      sql="DELETE FROM homes_house WHERE house_id=%s"
+      with connection.cursor() as cursor:
+            cursor.execute(sql,[house_id])
+      
+      return Response("DELETED SUCCESSFULY")
