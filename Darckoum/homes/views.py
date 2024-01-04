@@ -30,7 +30,7 @@ def add_house_api(request,id=0):
         house_serializer=HouseSerializer(data=house_data)
         if house_serializer.is_valid(): 
 
-         sql="insert into homes_house (title , price , address , city , description , property_type_id_id , transaction_id_id , user_id_id )values (%s,%s,%s,%s,%s,%s,%s,%s)"
+         sql="insert into homes_house (title , price , address , city , description , user_id_id , property_type_id_id , transaction_id_id  )values (%s,%s,%s,%s,%s,%s,%s,%s)"
          values =(
                   house_serializer.data ['title'],
                  house_serializer.data ['price'],
@@ -49,6 +49,8 @@ def add_house_api(request,id=0):
          return Response(house_serializer.data )
         else :
          return Response(house_serializer.errors,status=400 )
+
+
 
 @api_view(['GET'])
 def my_houses_api(request) :
