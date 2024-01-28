@@ -11,7 +11,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
         fields='__all__'
-
+        
+class loginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['user_id','password']
 
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:

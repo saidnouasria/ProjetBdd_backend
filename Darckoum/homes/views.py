@@ -5,8 +5,10 @@ from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 from rest_framework.response import Response
 from django.db import connection
-
-from .serializers import HouseSerializer,UserSerializer,TransactionSerializer,PropertySerializer
+from django.contrib.auth import authenticate, login
+from rest_framework import status
+from django.db.models import Q
+from .serializers import HouseSerializer,UserSerializer,TransactionSerializer,PropertySerializer,loginSerializer
 from homes.models import House,User,Transaction,Property
 
 
@@ -110,3 +112,69 @@ def house_details_api(request,house_id):
             cursor.execute(sql,[house_id])
       
       return Response("DELETED SUCCESSFULY")
+
+   else:
+      return Response(status=400)
+@api_view(['POST'])
+def signup_api(request):
+      if request.method == 'POST':
+         user_data=request.data
+         user_serializer=UserSerializer(data=user_data)
+         if user_serializer.is_valid():
+            sql="insert into homes_user (first_name, last_name, email, phone, gender, password )values (%s,%s,%s,%s,%s,%s)"
+            values =(
+                     user_serializer.data ['first_name'],
+                     user_serializer.data ['last_name'],
+                     user_serializer.data ['email'],
+                     user_serializer.data ['phone'],
+                     user_serializer.data ['gender'],
+                     user_serializer.data ['password']
+
+                  )
+            with connection.cursor() as cursor:
+               cursor.execute(sql,values)
+
+               
+         
+            return Response(user_serializer.data,status=201)
+         else:
+            return Response(user_serializer.errors,status=400)
+
+from django.contrib.auth.hashers import check_password
+
+@api_view(['POST'])
+def login_api(request):
+    if request.method == 'POST':
+        user_data = request.data
+        login_serializer = loginSerializer(data=user_data)
+        if login_serializer.is_valid():
+            email = login_serializer.data.get('email')
+            password = login_serializer.data.get('password')
+            print(f"Attempting login with email: {email}, password: {password}")
+            authnig = User.objects.raw(f"select password from homes_user where email = {email}")
+            print(f"Authentication result: {authnig}")
+            if authnig == password:
+                return Response({'message': 'Login successful'})
+            
+
+      #       if user is not None and check_password(password, user.password):
+      #           login(request, user)
+      #           return Response({'message': 'Login successful'})
+            else:
+                return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+      #   else:
+      #       return Response(login_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+
+
+@api_view(['GET'])
+def search_api(request):
+    if request.method == 'GET':
+        query = request.GET.get('query')
+        print(f"Searching for {query}")
+        houses = House.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
+        print(f"Found {len(houses)} results")
+        house_serializer = HouseSerializer(houses, many=True)
+        return Response(house_serializer.data)
+
+
